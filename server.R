@@ -7,6 +7,7 @@ library(purrr)
 library(readxl)
 library(shiny)
 library(googlesheets4)
+library(stringr)
 
 
 server <- function(input, output) {
@@ -46,7 +47,9 @@ server <- function(input, output) {
     req(input$file1)
     userinfo <- read_excel(input$file1$datapath, sheet = "metadata")
     
-    userinfo$draft_url[1] = gsub("https://sleeper.com/draft/nfl/", "", userinfo$draft_url[1])
+    # userinfo$draft_url[1] = gsub("https://sleeper.com/draft/nfl/", "", userinfo$draft_url[1])
+    userinfo$draft_url[1] = str_extract(userinfo$draft_url[1] , "[0-9]+")
+    
     return(userinfo)
   })
   

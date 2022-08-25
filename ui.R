@@ -7,7 +7,7 @@ library(purrr)
 library(readxl)
 library(shiny)
 library(googlesheets4)
-
+library(stringr)
 
 ui <- fluidPage(
   
@@ -69,13 +69,15 @@ ui <- fluidPage(
                            integrate with your draft and", strong("dynamically update your BeerSheet 
                                                                    to show who's been drafted and who's still left.")),
                          p(style = "font-size:125%;", "Note that this app currently
-                         only works for", strong("Sleeper Leagues."), "If there is 
+                         only works for", strong("Sleeper Leagues"), "(both real-time drafts and mock drafts). If there is 
                          sufficient interest, I will look into generalizing this app for 
                            ESPN and Yahoo Leagues."),
-                         p(style = "font-size:125%;", "This app requires the following:"),
-                         p(style = "font-size:125%;", "1) A Google Account (the dynamic spreadsheet will be a 
+                         p(style = "font-size:125%;", "You should have the following:"),
+                         tags$ol(
+                           tags$li(style = "font-size:110%;", "A Google Account (the dynamic spreadsheet will be a 
                            Google Sheet)."),
-                         p(style = "font-size:125%;", "2) Microsoft Excel."),
+                           tags$li(style = "font-size:110%;", "Microsoft Excel (recommended but not required).")
+                         ),
                          br(), 
                          p(style = "font-size:125%;", strong("P.S."), "If you like this app, feel free to check out", 
                            a(href = "https://www.statswithsasa.com", 
@@ -97,31 +99,55 @@ ui <- fluidPage(
                 tabPanel("Instructions",
                          h2("Instructions"),
                          p(style = "font-size:125%;", "To run this app, follow these instructions:"),
-                         p(style = "font-size:125%;", "1) Download the", strong("Custom BeerSheets Template"), "from the 
+                         tags$ol(
+                           tags$li(style = "font-size:125%;", "Download the", strong("Custom BeerSheets Template"), "from the 
                            panel on the left."),
-                         p(style = "font-size:125%;", "2) Go to the ", a(href = "https://footballabsurdity.com/beersheet-request-form/", "BeerSheets site", target="_blank"),
-                           "and request a BeerSheet based on your league settings."), 
-                         p(style = "font-size:125%;", "3) Download ", strong("BOTH"), "the .csv and .xlsx files from BeerSheets."),
-                         p(style = "font-size:125%;", '4) Paste the .csv file into the "BeerSheet_csv_raw" tab and the .xlsx file 
+                           tags$li(style = "font-size:125%;", "Go to the ", a(href = "https://footballabsurdity.com/beersheet-request-form/", "BeerSheets site", target="_blank"),
+                             "and request a BeerSheet based on your league settings."),
+                           tags$li(style = "font-size:125%;", "Download ", strong("BOTH"), 
+                                   "the .csv and .xlsx files from BeerSheets."),
+                           tags$li(style = "font-size:125%;", 'Paste the .csv file into the "BeerSheet_csv_raw" tab and the .xlsx file 
                            into the "Beersheet_xlsx_raw" tab of the template. Take care to', strong("completely overwrite"),
-                           "anything in those tabs. I recommend copy and pasting the entire sheet from the source."),
-                         p(style = "font-size:125%;", "5) Navigate to", a(href = "https://drive.google.com/drive/my-drive", "Google Drive", target="_blank"),
-                           "and create a new Google Sheet."),
-                         p(style = "font-size:125%;", "6) In the new Google Sheet, upload the Formatted Custom BeerSheet by 
+                             "anything in those tabs. I recommend copy and pasting the entire sheet from the source."),
+                           br(),
+                           tags$ul(
+                             tags$li(style = "font-size:110%;", "If you don't have excel, skip to steps 5-7, then import the .csv & .xlsx BeerSheets 
+                                     into separate Google Sheets as well. Paste them in the uploaded Google Sheet
+                                     created in steps 5-6 and edit the \"metadata\" tab as described in step 8 
+                                     in the Google Sheet itself instead. You can then download this sheet and upload
+                                     it to the app without ever using excel.")
+                           ),
+                           br(),
+                           tags$li(style = "font-size:125%;", "Navigate to", a(href = "https://drive.google.com/drive/my-drive", "Google Drive", target="_blank"),
+                             "and create a new Google Sheet."),
+                           tags$li(style = "font-size:125%;", "In the new Google Sheet, upload the Formatted Custom BeerSheet by 
                            navigating to File -> Import -> Upload and selecting the formatted custom excel file."),
-                         p(style = "font-size:125%;", "7) Edit the Google Sheet permissions so anyone can edit it. You can do so by clicking the green \"Share\"
+                           tags$li(style = "font-size:125%;", "Edit the Google Sheet permissions so anyone can edit it. You can do so by clicking the green \"Share\"
                            button on the top right -> click \"save\" -> under \"General Access\", 
-                           change it so \"Anyone with the link\" is an editor", strong("(not just a viewer)."),
-                           "The app WILL NOT work if you don't do this step."),
-                         p(style = "font-size:125%;", '8) In the "metadata" tab of the', strong("Excel file (not the Google Sheet)"),
-                           "update the 3 fields with a link to your Sleeper draft room, your Sleeper usename, 
-                           and a link to the Google Sheet you just created."),
-                         p(style = "font-size:125%;", "9) Upload the Formatted Custom BeerSheet using the side panel on the left."),
-                         p(style = "font-size:125%;", "10) You're ready to go! Click the \"Update BeerSheet\"
+                           change it so \"Anyone with the link\" is an editor", strong("(not just a viewer).")),
+                           br(),
+                           tags$ul(
+                             tags$li(style = "font-size:110%;", "The app WILL NOT work if you don't do this step.")
+                           ),
+                           br(),
+                           tags$li(style = "font-size:125%;", 'In the "metadata" tab of the', strong("Excel file (not the Google Sheet)"),
+                             "update the 3 fields with a link to your Sleeper draft room, your Sleeper usename, 
+                             and a link to the Google Sheet you just created."),
+                           br(),
+                           tags$ul(
+                             tags$li(style = "font-size:110%;", "Note: Do NOT paste them in the first row, instead
+                                     overwrite the \"placeholders\" in the second row. Keep the first row as is.")
+                           ),
+                           br(),
+                           tags$li(style = "font-size:125%;", "Upload the Formatted Custom BeerSheet using the side panel 
+                                   on the left."),
+                           tags$li(style = "font-size:125%;", "You're ready to go! Click the \"Update BeerSheet\"
                            button whenever you want to update the Google Sheet
                            with your draft progress. If the app has successfully executed,
                            some information about your draft and when the Dynamic BeerSheet
-                           was last updated will display on the sidepanel."),
+                           was last updated will display on the sidepanel.")
+   
+                         ),
                          br(),
                          p(style = "font-size:125%;", strong("Note:"), "If your screen greys out at any time, 
                            it means the app has crashed or your session has timed out due to inactivity. 
