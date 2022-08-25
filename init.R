@@ -1,2 +1,2 @@
-helpers.installPackages("dplyr", "rvest", "httr", "jsonlite", "stringr",
+helpers.installPackages("dplyr", "rvest", "httr", "jsonlite", "stringr", "ffscrapr",
                         "glue", "purrr", "readxl", "shiny", "googlesheets4")
