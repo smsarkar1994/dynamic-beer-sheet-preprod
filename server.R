@@ -11,35 +11,15 @@ library(stringr)
 
 
 server <- function(input, output) {
+  start_time = Sys.time()
+
+  
+
   bs <- reactive({
     req(input$file1)
     bs <- read_excel(input$file1$datapath, sheet = "BeerSheet_csv_updated")
     
     return(bs)
-  })
-  
-  qb <- reactive({
-    req(input$file1)
-    df <- read_excel(input$file1$datapath, sheet = "BeerSheet_updated",
-                     range = "B5:J41")
-    
-    return(df)
-  })
-  
-  te <- reactive({
-    req(input$file1)
-    df <- read_excel(input$file1$datapath, sheet = "BeerSheet_updated",
-                     range = "B44:J65")
-    
-    return(df)
-  })
-  
-  rb <- reactive({
-    req(input$file1)
-    df <- read_excel(input$file1$datapath, sheet = "BeerSheet_updated",
-                     range = "M5:V65")
-    
-    return(df)
   })
   
   
@@ -115,5 +95,20 @@ server <- function(input, output) {
       paste0("<b>Last Updated: </b>", Sys.time())
     })
   })
+  
+  autoInvalidate <- reactiveTimer(15000)
+  observe({
+    autoInvalidate()
+    if(Sys.time() <= start_time + 5*60) {
+      cat(".")
+      # output$test <- renderText(start_time)
+    }
 
+  })
+  
+  observe({
+    autoInvalidate()
+
+  })
+  
 }
