@@ -74,9 +74,9 @@ ui <- fluidPage(
                            ESPN and Yahoo Leagues."),
                          p(style = "font-size:125%;", "You should have the following:"),
                          tags$ol(
-                           tags$li(style = "font-size:110%;", "A Google Account (the dynamic spreadsheet will be a 
+                           tags$li(style = "font-size:125%;", "A Google Account (the dynamic spreadsheet will be a 
                            Google Sheet)."),
-                           tags$li(style = "font-size:110%;", "Microsoft Excel (recommended but not required).")
+                           tags$li(style = "font-size:125%;", "Microsoft Excel (recommended but not required).")
                          ),
                          br(), 
                          p(style = "font-size:125%;", strong("P.S."), "If you like this app, feel free to check out", 
@@ -111,8 +111,8 @@ ui <- fluidPage(
                              "anything in those tabs. I recommend copy and pasting the entire sheet from the source."),
                            br(),
                            tags$ul(
-                             tags$li(style = "font-size:110%;", "If you don't have excel, skip to steps 5-7, then import the .csv & .xlsx BeerSheets 
-                                     into separate Google Sheets as well. Paste them in the uploaded Google Sheet
+                             tags$li(style = "font-size:125%;", "If you don't have excel, skip to steps 5-7, then import the .csv & .xlsx BeerSheets 
+                                     into separate Google Sheets as well. Paste them into the uploaded Google Sheet
                                      created in steps 5-6 and edit the \"metadata\" tab as described in step 8 
                                      in the Google Sheet itself instead. You can then download this sheet and upload
                                      it to the app without ever using excel.")
@@ -124,10 +124,12 @@ ui <- fluidPage(
                            navigating to File -> Import -> Upload and selecting the formatted custom excel file."),
                            tags$li(style = "font-size:125%;", "Edit the Google Sheet permissions so anyone can edit it. You can do so by clicking the green \"Share\"
                            button on the top right -> click \"save\" -> under \"General Access\", 
-                           change it so \"Anyone with the link\" is an editor", strong("(not just a viewer).")),
+                           change it so \"Anyone with the link\" is an editor", strong("(not just a viewer)."),
+                                   "Your screen should look like", a(href = "https://www.imgur.com/a/5p66xYt",
+                                                                     "this.", target = "_place")),
                            br(),
                            tags$ul(
-                             tags$li(style = "font-size:110%;", "The app WILL NOT work if you don't do this step.")
+                             tags$li(style = "font-size:125%;", "The app WILL NOT work if you don't do this step.")
                            ),
                            br(),
                            tags$li(style = "font-size:125%;", 'In the "metadata" tab of the', strong("Excel file (not the Google Sheet)"),
@@ -135,7 +137,7 @@ ui <- fluidPage(
                              and a link to the Google Sheet you just created."),
                            br(),
                            tags$ul(
-                             tags$li(style = "font-size:110%;", "Note: Do NOT paste them in the first row, instead
+                             tags$li(style = "font-size:125%;", "Note: Do NOT paste them in the first row, instead
                                      overwrite the \"placeholders\" in the second row. Keep the first row as is.")
                            ),
                            br(),
