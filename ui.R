@@ -8,7 +8,9 @@ library(readxl)
 library(shiny)
 library(googlesheets4)
 library(stringr)
-library(RSelenium)
+library(tidyr)
+library(xml2)
+
 
 
 ui <- fluidPage(
@@ -31,7 +33,7 @@ ui <- fluidPage(
                  uiOutput("link"),
                  textInput("code", "Enter Code"),
                  actionButton("auth", "Authenticate", class = "btn-primary"),
-                 textOutput("test"),
+                 verbatimTextOutput("test"),
                  # br(),
                  # br(),
                  h4("Download Custom BeerSheet Template"),

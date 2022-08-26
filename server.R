@@ -8,6 +8,8 @@ library(readxl)
 library(shiny)
 library(googlesheets4)
 library(stringr)
+library(tidyr)
+library(xml2)
 
 
 server <- function(input, output) {
@@ -43,12 +45,31 @@ server <- function(input, output) {
       league_id = "1274195"
       game_id = "414"
       
-      url <- glue("https://fantasysports.yahooapis.com/fantasy/v2/league/{game_id}.l.{league_id}/settings")
-      
-      test <- GET(url, add_headers(Authorization =
+      url <- glue("https://fantasysports.yahooapis.com/fantasy/v2/league/{game_id}.l.{league_id}/players;status=T")
+
+      req <- GET(url, add_headers(Authorization =
                                      paste0("Bearer ", yahoo_token$access_token)))
       
-      output$test <- renderText(test$status_code)
+      ydat <- as_list((content(req))) %>%
+        as_tibble() %>%
+        unnest_longer(fantasy_content) %>%
+        unnest(cols = names(.))
+      
+      
+      
+      ydat <- ydat %>%
+        filter(fantasy_content_id == "players") %>%
+        unnest_wider(fantasy_content) %>%
+        select(player_id, name, editorial_team_abbr) %>%
+        unnest_longer(name) %>%
+        filter(name_id == "full") %>%
+        unnest(cols = names(.)) %>%
+        data.frame() %>%
+        mutate(key = paste0(name, toupper(editorial_team_abbr)),
+               key = gsub("\\.|\\'", "", key))
+      
+      
+      output$test <- renderText(ydat$key)
     })
     
   })
