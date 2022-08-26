@@ -8,26 +8,40 @@ library(readxl)
 library(shiny)
 library(googlesheets4)
 library(stringr)
-library(RSelenium)
 
 
 server <- function(input, output) {
   start_time = Sys.time()
 
-  observeEvent(input$auth, {
-    dr <- rsDriver(port=4445L, browser = "firefox", check = T) ##4445 for mac. windows can use 4444
-    remDr <- dr[["client"]]
+  observeEvent(input$get_code, {
+    options("httr_oob_default" = T)
     
-    remDr$navigate("https://www.w3schools.com/html/html_tables.asp")
-    xp = '/html/body/div[7]/div[1]/div[1]/div[3]/div/table'
-    df <- remDr$findElement(using = 'xpath', 
-                            value = xp)
+    cKey = "dj0yJmk9S2ZZaEE2YkJFSGJSJmQ9WVdrOVdVUkJWMkpQVG1NbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWMy"
+    cSecret = "2c73fdf1a08472f286cddd46cf1fba3a1b4db065"
     
-    t <- df$getElementAttribute('innerHTML')[[1]] %>%
-      read_html() %>%
-      html_text2()
+    yahoo <- httr::oauth_endpoint(authorize ="https://api.login.yahoo.com/oauth2/request_auth", 
+                                  access = "https://api.login.yahoo.com/oauth2/get_token", 
+                                  base_url = "https://fantasysports.yahooapis.com")
     
-    output$test <- renderText(t)
+    myapp <- httr::oauth_app("yahoo", key=cKey, secret = cSecret, redirect_uri = "oob")
+    
+    httr::BROWSE(httr::oauth2.0_authorize_url(yahoo, myapp, scope="fspt-r", redirect_uri = myapp$redirect_uri))
+    
+    observeEvent(input$auth, {
+      passcode = input$code
+      
+      yahoo_token <- httr::oauth2.0_access_token(yahoo,myapp,code=passcode)
+      
+      league_id = "1274195"
+      game_id = "414"
+      
+      url <- glue("https://fantasysports.yahooapis.com/fantasy/v2/league/{game_id}.l.{league_id}/settings")
+      
+      test <- GET(url, add_headers(Authorization =
+                                     paste0("Bearer ", yahoo_token$access_token)))
+      
+      output$test <- renderText(paste0(test$status_code))
+    })
     
   })
 
