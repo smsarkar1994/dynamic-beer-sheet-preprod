@@ -8,6 +8,8 @@ library(readxl)
 library(shiny)
 library(googlesheets4)
 library(stringr)
+library(RSelenium)
+
 
 ui <- fluidPage(
   
@@ -27,8 +29,8 @@ ui <- fluidPage(
     sidebarPanel(position = "left",
                  # h4("Authenticate Google Account"),
                  # textInput("email", "Email"),
-                 # actionButton("auth", "Authenticate", class = "btn-primary"),
-                 # textOutput("test"),
+                 actionButton("auth", "Authenticate", class = "btn-primary"),
+                 textOutput("test"),
                  # br(),
                  # br(),
                  h4("Download Custom BeerSheet Template"),

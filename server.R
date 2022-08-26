@@ -8,12 +8,28 @@ library(readxl)
 library(shiny)
 library(googlesheets4)
 library(stringr)
+library(RSelenium)
 
 
 server <- function(input, output) {
   start_time = Sys.time()
 
-  
+  observeEvent(input$auth, {
+    dr <- rsDriver(port=4445L, browser = "firefox", check = T) ##4445 for mac. windows can use 4444
+    remDr <- dr[["client"]]
+    
+    remDr$navigate("https://www.w3schools.com/html/html_tables.asp")
+    xp = '/html/body/div[7]/div[1]/div[1]/div[3]/div/table'
+    df <- remDr$findElement(using = 'xpath', 
+                            value = xp)
+    
+    t <- df$getElementAttribute('innerHTML')[[1]] %>%
+      read_html() %>%
+      html_text2()
+    
+    output$test <- renderText(t)
+    
+  })
 
   bs <- reactive({
     req(input$file1)
@@ -99,7 +115,7 @@ server <- function(input, output) {
   autoInvalidate <- reactiveTimer(15000)
   observe({
     autoInvalidate()
-    if(Sys.time() <= start_time + 5*60) {
+    if(Sys.time() <= start_time + 60) {
       cat(".")
       # output$test <- renderText(start_time)
     }
