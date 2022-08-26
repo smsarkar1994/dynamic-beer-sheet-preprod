@@ -30,7 +30,7 @@ server <- function(input, output) {
     # output$link <- renderText(paste0(nav_link))
     
     output$link <- renderUI({
-      tags$a(href = nav_link, "Click here", targget = "_blank")
+      tags$a(href = nav_link, "Click here", target = "_blank")
     })
     
     # httr::BROWSE(httr::oauth2.0_authorize_url(yahoo, myapp, scope="fspt-r", redirect_uri = myapp$redirect_uri))
