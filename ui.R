@@ -27,13 +27,10 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(position = "left",
-                 # h4("Authenticate Google Account"),
-                 # textInput("email", "Email"),
-                 textInput("code", "Code"),
-                 column(2,
-                        actionButton("get_code", "Get Code", class = "btn-primary"),
-                        actionButton("auth", "Authenticate", class = "btn-primary"),
-                 ),
+                 actionButton("get_code", "Get Code", class = "btn-primary"),
+                 uiOutput("link"),
+                 textInput("code", "Enter Code"),
+                 actionButton("auth", "Authenticate", class = "btn-primary"),
                  textOutput("test"),
                  # br(),
                  # br(),

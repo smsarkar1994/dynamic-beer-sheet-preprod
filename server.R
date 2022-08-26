@@ -25,8 +25,16 @@ server <- function(input, output) {
     
     myapp <- httr::oauth_app("yahoo", key=cKey, secret = cSecret, redirect_uri = "oob")
     
-    httr::BROWSE(httr::oauth2.0_authorize_url(yahoo, myapp, scope="fspt-r", redirect_uri = myapp$redirect_uri))
+    nav_link = httr::oauth2.0_authorize_url(yahoo, myapp, scope="fspt-r", redirect_uri = myapp$redirect_uri)
     
+    # output$link <- renderText(paste0(nav_link))
+    
+    output$link <- renderUI({
+      tags$a(href = nav_link, "Click here", targget = "_blank")
+    })
+    
+    # httr::BROWSE(httr::oauth2.0_authorize_url(yahoo, myapp, scope="fspt-r", redirect_uri = myapp$redirect_uri))
+    # 
     observeEvent(input$auth, {
       passcode = input$code
       
@@ -40,7 +48,7 @@ server <- function(input, output) {
       test <- GET(url, add_headers(Authorization =
                                      paste0("Bearer ", yahoo_token$access_token)))
       
-      output$test <- renderText(paste0(test$status_code))
+      output$test <- renderText(test$status_code)
     })
     
   })
