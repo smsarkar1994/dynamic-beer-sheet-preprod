@@ -110,7 +110,7 @@ server <- function(input, output) {
                key = paste0(name, toupper(editorial_team_abbr)),
                key = gsub("\\.|\\'", "", key))
 
-      output$test <- renderText(getwd())
+      # output$test <- renderText(getwd())
     } else{
       
       url <- glue("https://api.sleeper.app/v1/draft/{draft_id}/picks")

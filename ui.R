@@ -128,10 +128,13 @@ ui <- fluidPage(
                              tags$li(style = "font-size:125%;","Copy and paste this code into the \"Enter Code\" field."),
                              tags$li(style = "font-size:125%;","Click the \"Authenticate\" button. If the authentication succeeds,
                                      a message will pop up saying so. If not, reload the app and try again.
-                                     If the authentication process succeeds", strong("DO NOT CLICK THIS BUTTON AGAIN or the app will crash."))
+                                     If the authentication process succeeds", strong("DO NOT CLICK THIS BUTTON AGAIN or the app will crash.")),
+                             tags$li(style = "font-size:125%;", "Enter your League ID. To find this, navigate to your League homepage -
+                                     the League ID is the number after \"https://football.fantasysports.yahoo.com/f1/\".",
+                                     a(href = "https://imgur.com/a/WkwpOfT", "It should look like this.", target="_blank"))
                            ),
                            br(),
-                           tags$li(style = "font-size:125%;margin-top:1%", "Download the", strong("Custom BeerSheets Template"), "from the 
+                           tags$li(style = "font-size:125%", "Download the", strong("Custom BeerSheets Template"), "from the 
                            panel on the left."),
                            tags$li(style = "font-size:125%;margin-top:1%", "Go to the ", a(href = "https://footballabsurdity.com/beersheet-request-form/", "BeerSheets site", target="_blank"),
                              "and request a BeerSheet based on your league settings."),
@@ -149,7 +152,7 @@ ui <- fluidPage(
                                      it to the app without ever using excel.")
                            ),
                            br(),
-                           tags$li(style = "font-size:125%;margin-top:1%", "Navigate to", a(href = "https://drive.google.com/drive/my-drive", "Google Drive", target="_blank"),
+                           tags$li(style = "font-size:125%;", "Navigate to", a(href = "https://drive.google.com/drive/my-drive", "Google Drive", target="_blank"),
                              "and create a new Google Sheet."),
                            tags$li(style = "font-size:125%;margin-top:1%", "In the new Google Sheet, upload the Formatted Custom BeerSheet by 
                            navigating to File -> Import -> Upload and selecting the formatted custom excel file."),
@@ -163,7 +166,7 @@ ui <- fluidPage(
                              tags$li(style = "font-size:125%;", "The app WILL NOT work if you don't do this step.")
                            ),
                            br(),
-                           tags$li(style = "font-size:125%;margin-top:1%", 'In the "metadata" tab of the', strong("Excel file (not the Google Sheet)"),
+                           tags$li(style = "font-size:125%;", 'In the "metadata" tab of the', strong("Excel file (not the Google Sheet)"),
                              "update the 3 fields with a link to your Sleeper draft room and your Sleeper username (Sleeper leagues only), 
                              as well as a link to the Google Sheet you just created (all league formats)."),
                            br(),
@@ -172,7 +175,7 @@ ui <- fluidPage(
                                      overwrite the \"placeholders\" in the second row. Keep the first row as is.")
                            ),
                            br(),
-                           tags$li(style = "font-size:125%;margin-top:1%", "Upload the Formatted Custom BeerSheet using the side panel 
+                           tags$li(style = "font-size:125%;", "Upload the Formatted Custom BeerSheet using the side panel 
                                    on the left."),
                            tags$li(style = "font-size:125%;margin-top:1%", "You're ready to go! Click the \"Update BeerSheet\"
                            button whenever you want to update the Google Sheet
@@ -184,7 +187,8 @@ ui <- fluidPage(
                          br(),
                          p(style = "font-size:125%;margin-top:1%", strong("Note:"), "If your screen greys out at any time, 
                            it means the app has crashed or your session has timed out due to inactivity. 
-                           Refresh it and make sure you've followed every step of these instructions."),
+                           Refresh it and make sure you've followed every step of these instructions. 
+                           The app will not work until your live draft or mock has actually begun."),
                          p(style = "font-size:125%;margin-top:1%", "If the session has timed out, all you need to do is refresh and reupload
                            the Formatted Custom BeerSheet on the side panel to keep using the app. Nothing further
                            is required to keep using the app after the initial setup.")
