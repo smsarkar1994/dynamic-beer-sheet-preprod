@@ -89,9 +89,8 @@ ui <- fluidPage(
                            integrate with your draft and", strong("dynamically update your BeerSheet 
                                                                    to show who's been drafted and who's still left.")),
                          p(style = "font-size:125%;", "Note that this app currently
-                         only works for", strong("Sleeper Leagues"), "(both real-time drafts and mock drafts). If there is 
-                         sufficient interest, I will look into generalizing this app for 
-                           ESPN and Yahoo Leagues."),
+                         only works for", strong("Yahoo Leagues"), "(real-time drafts) and", strong("Sleeper Leagues"), "(both real-time drafts and mock drafts). 
+                           It is likely not possible to add support for ESPN or NFL.com leagues."),
                          p(style = "font-size:125%;", "You should have the following:"),
                          tags$ol(
                            tags$li(style = "font-size:125%;", "A Google Account (the dynamic spreadsheet will be a 
@@ -120,6 +119,16 @@ ui <- fluidPage(
                          h2("Instructions"),
                          p(style = "font-size:125%;", "To run this app, follow these instructions:"),
                          tags$ol(
+                           tags$li(style = "font-size:125%;", "Select your league format in the side panel.",
+                                   strong("For Yahoo leagues only,"), "also do the following"),
+                           tags$ul(
+                             tags$li(style = "font-size:125%;","Click the \"Get Code\" button and click on the link that appears below 
+                             to generate an authentication code."),
+                             tags$li(style = "font-size:125%;","Copy and paste this code into the \"Enter Code\" field."),
+                             tags$li(style = "font-size:125%;","Click the \"Authenticate\" button. If the authentication succeeds,
+                                     a message will pop up saying so. If not, reload the app and try again.
+                                     If the authentication process succeeds", strong("DO NOT CLICK THIS BUTTON AGAIN or the app will crash."))
+                           ),
                            tags$li(style = "font-size:125%;", "Download the", strong("Custom BeerSheets Template"), "from the 
                            panel on the left."),
                            tags$li(style = "font-size:125%;", "Go to the ", a(href = "https://footballabsurdity.com/beersheet-request-form/", "BeerSheets site", target="_blank"),
@@ -153,8 +162,8 @@ ui <- fluidPage(
                            ),
                            br(),
                            tags$li(style = "font-size:125%;", 'In the "metadata" tab of the', strong("Excel file (not the Google Sheet)"),
-                             "update the 3 fields with a link to your Sleeper draft room, your Sleeper usename, 
-                             and a link to the Google Sheet you just created."),
+                             "update the 3 fields with a link to your Sleeper draft room and your Sleeper username (Sleeper leagues only), 
+                             as well as a link to the Google Sheet you just created (all league formats)."),
                            br(),
                            tags$ul(
                              tags$li(style = "font-size:125%;", "Note: Do NOT paste them in the first row, instead

@@ -132,7 +132,8 @@ server <- function(input, output) {
       
       dat <- dat %>%
         mutate(key = paste0(first_name, " ", last_name, team),
-               key = gsub("\\.|\\'", "", key))
+               key = gsub("\\.|\\'", "", key),
+               key = gsub("Gabe DavisBUF", "Gabriel DavisBUF", key))
       
     }
   
