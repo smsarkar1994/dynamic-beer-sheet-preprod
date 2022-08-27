@@ -29,11 +29,26 @@ ui <- fluidPage(
     
     # Sidebar panel for inputs ----
     sidebarPanel(position = "left",
-                 actionButton("get_code", "Get Code", class = "btn-primary"),
-                 uiOutput("link"),
-                 textInput("code", "Enter Code"),
-                 actionButton("auth", "Authenticate", class = "btn-primary"),
-                 verbatimTextOutput("test"),
+                 h4("Select League Format"),
+                 radioButtons("format", "",
+                              choiceNames = list(
+                                "Sleeper",
+                                "Yahoo"
+                              ), 
+                              choiceValues = list(
+                                "sleeper", "yahoo"
+                              )),
+                 conditionalPanel(condition = "input.format == 'yahoo'", 
+                                  actionButton("get_code", "Get Code", class = "btn-primary"),
+                                  uiOutput("link"),
+                                  br(),
+                                  textInput("code", "Enter Code"),
+                                  actionButton("auth", "Authenticate", class = "btn-primary"),
+                                  verbatimTextOutput("success"),
+                                  br(),
+                                  textInput("league_id", "Enter League ID"),
+                                  verbatimTextOutput("test")),
+                 br(),
                  # br(),
                  # br(),
                  h4("Download Custom BeerSheet Template"),

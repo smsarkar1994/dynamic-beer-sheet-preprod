@@ -28,48 +28,18 @@ server <- function(input, output) {
     myapp <- httr::oauth_app("yahoo", key=cKey, secret = cSecret, redirect_uri = "oob")
     
     nav_link = httr::oauth2.0_authorize_url(yahoo, myapp, scope="fspt-r", redirect_uri = myapp$redirect_uri)
-    
-    # output$link <- renderText(paste0(nav_link))
-    
+  
     output$link <- renderUI({
-      tags$a(href = nav_link, "Click here", target = "_blank")
+      tags$a(href = nav_link, "Click here to generate auth code", target = "_blank")
     })
     
-    # httr::BROWSE(httr::oauth2.0_authorize_url(yahoo, myapp, scope="fspt-r", redirect_uri = myapp$redirect_uri))
-    # 
     observeEvent(input$auth, {
       passcode = input$code
-      
-      yahoo_token <- httr::oauth2.0_access_token(yahoo,myapp,code=passcode)
-      
-      league_id = "1274195"
-      game_id = "414"
-      
-      url <- glue("https://fantasysports.yahooapis.com/fantasy/v2/league/{game_id}.l.{league_id}/players;status=T")
 
-      req <- GET(url, add_headers(Authorization =
-                                     paste0("Bearer ", yahoo_token$access_token)))
+      yahoo_token <<- httr::oauth2.0_access_token(yahoo,myapp,code=passcode)
       
-      ydat <- as_list((content(req))) %>%
-        as_tibble() %>%
-        unnest_longer(fantasy_content) %>%
-        unnest(cols = names(.))
-      
-      
-      
-      ydat <- ydat %>%
-        filter(fantasy_content_id == "players") %>%
-        unnest_wider(fantasy_content) %>%
-        select(player_id, name, editorial_team_abbr) %>%
-        unnest_longer(name) %>%
-        filter(name_id == "full") %>%
-        unnest(cols = names(.)) %>%
-        data.frame() %>%
-        mutate(key = paste0(name, toupper(editorial_team_abbr)),
-               key = gsub("\\.|\\'", "", key))
-      
-      
-      output$test <- renderText(ydat$key)
+      output$success <- renderText("Yahoo authentication successful!\nDo not authenticate again unless app crashes.")
+    
     })
     
   })
@@ -86,7 +56,6 @@ server <- function(input, output) {
     req(input$file1)
     userinfo <- read_excel(input$file1$datapath, sheet = "metadata")
     
-    # userinfo$draft_url[1] = gsub("https://sleeper.com/draft/nfl/", "", userinfo$draft_url[1])
     userinfo$draft_url[1] = str_extract(userinfo$draft_url[1] , "[0-9]+")
     
     return(userinfo)
@@ -98,27 +67,75 @@ server <- function(input, output) {
     user_id = userinfo()$sleeper_userid[1]
     g_url = userinfo()$googlesheet_url[1]
     
-    url <- glue("https://api.sleeper.app/v1/draft/{draft_id}/picks")
-    
-    draft <- GET(url) %>%
-      content()
-    
-    m1 <- draft %>%
-      map_df(magrittr::extract, c("round", "roster_id", "player_id", "picked_by",
-                                  "pick_no", "draft_slot"))
-    
-    m2 <- draft %>%
-      map("metadata") %>%
-      map_df(magrittr::extract, c("player_id", "first_name", "last_name", "years_exp", 
-                                  "team", "status", "position", "number",
-                                  "injury_status"))
-    
-    dat <- left_join(m1, m2, by = "player_id")
-    
-    dat <- dat %>%
-      mutate(key = paste0(first_name, " ", last_name, team),
-             key = gsub("\\.|\\'", "", key))
-    
+    if(input$format == "yahoo") {
+      league_id = input$league_id
+      game_id = "414"
+      
+      start = 0
+      numplayers = 25
+      dat <- data.frame()
+      while(TRUE == TRUE) {
+        url <- glue("https://fantasysports.yahooapis.com/fantasy/v2/league/{game_id}.l.{league_id}/players;status=T;start={start}")
+        
+        
+        req <- GET(url, add_headers(Authorization =
+                                      paste0("Bearer ", yahoo_token$access_token)))
+        
+        tmp <- as_list((content(req))) %>%
+          as_tibble() %>%
+          unnest_longer(fantasy_content) %>%
+          unnest(cols = names(.)) %>%
+          filter(fantasy_content_id == "players")
+        
+        
+        
+        dat <- rbind(dat, tmp)
+        if(nrow(tmp) < 25) {
+          break
+        }
+        
+        
+        start = start+25
+        
+      }
+      
+      dat <- dat %>%
+        unnest_wider(fantasy_content) %>%
+        select(player_id, name, editorial_team_abbr) %>%
+        unnest_longer(name) %>%
+        filter(name_id == "full") %>%
+        unnest(cols = names(.)) %>%
+        data.frame() %>%
+        mutate(name = gsub("\\sJr|\\sSr", "", name),
+               key = paste0(name, toupper(editorial_team_abbr)),
+               key = gsub("\\.|\\'", "", key))
+
+      output$test <- renderText(getwd())
+    } else{
+      
+      url <- glue("https://api.sleeper.app/v1/draft/{draft_id}/picks")
+      
+      draft <- GET(url) %>%
+        content()
+      
+      m1 <- draft %>%
+        map_df(magrittr::extract, c("round", "roster_id", "player_id", "picked_by",
+                                    "pick_no", "draft_slot"))
+      
+      m2 <- draft %>%
+        map("metadata") %>%
+        map_df(magrittr::extract, c("player_id", "first_name", "last_name", "years_exp", 
+                                    "team", "status", "position", "number",
+                                    "injury_status"))
+      
+      dat <- left_join(m1, m2, by = "player_id")
+      
+      dat <- dat %>%
+        mutate(key = paste0(first_name, " ", last_name, team),
+               key = gsub("\\.|\\'", "", key))
+      
+    }
+  
     bs <- bs() %>%
       mutate(`drafted?` = ifelse(bs()$key %in% dat$key, 1, 0))
     
@@ -147,7 +164,12 @@ server <- function(input, output) {
     })
     
     output$last_pick <- renderText({
-      paste0("<b>Last Updated Pick: </b>", max(dat$pick_no))
+      if(input$format == "sleeper"){
+        paste0("<b>Last Updated Pick: </b>", max(dat$pick_no))
+      }else{
+        paste0("<b>Last Updated Pick: </b>", nrow(dat))
+      }
+
     })
     
     output$status <- renderText({
@@ -160,7 +182,7 @@ server <- function(input, output) {
     autoInvalidate()
     if(Sys.time() <= start_time + 60) {
       cat(".")
-      # output$test <- renderText(start_time)
+
     }
 
   })
