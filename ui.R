@@ -131,7 +131,14 @@ ui <- fluidPage(
                                      If the authentication process succeeds", strong("DO NOT CLICK THIS BUTTON AGAIN or the app will crash.")),
                              tags$li(style = "font-size:125%;", "Enter your League ID. To find this, navigate to your League homepage -
                                      the League ID is the number after \"https://football.fantasysports.yahoo.com/f1/\".",
-                                     a(href = "https://imgur.com/a/WkwpOfT", "It should look like this.", target="_blank"))
+                                     a(href = "https://imgur.com/a/WkwpOfT", "It should look like this.", target="_blank")),
+                             tags$li(style = "font-size:125%;", strong("Note:"), "You can now test if the app works with your Yahoo league
+                                     prior to your draft. Just follow these instructions, and if your draft hasn't started yet
+                                     but the app worked, a message will display saying \"Yahoo test successful!\"
+                                     The metadata tab in your Google Sheet will also update indicating that the test succeeded.
+                                     Please see", 
+                                     a(href = "https://www.youtube.com/watch?v=OkhK7GekFMU", "this video", target="_blank"),
+                                     "for an example of how the app will work for a Yahoo league.")
                            ),
                            br(),
                            tags$li(style = "font-size:125%", "Download the", strong("Custom BeerSheets Template"), "from the 
